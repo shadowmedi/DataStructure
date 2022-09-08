@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <time.h>
 #define InitialCapacity 5
 typedef int HeapDataType;
 typedef struct Heap
@@ -31,5 +32,7 @@ bool HeapEmpty(Heap* hp);//判断堆是否为空
 int HeapSize(Heap* hp);//堆的当前元素个数
 
 void HeapSort(int* arr, int n);//堆排序
+
+void PrintTopk(int* data, int n, int k);//topk问题
 
 

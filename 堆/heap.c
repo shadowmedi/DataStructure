@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "heap.h"
 
+//´òÓ¡¶ÑÖĞµÄÊı¾İ
 void HeapPrint(Heap* hp)
 {
 	assert(hp);
@@ -11,6 +12,7 @@ void HeapPrint(Heap* hp)
 	printf("\n");
 }
 
+//½»»»¶ÑÖĞµÄÊı¾İ
 void Swap(HeapDataType* a, HeapDataType* b)
 {
 	HeapDataType tem = *a;
@@ -18,6 +20,7 @@ void Swap(HeapDataType* a, HeapDataType* b)
 	*b = tem;
 }
 
+//¶ÑµÄ³õÊ¼»¯
 void HeapInit(Heap* hp)
 {
 	assert(hp);
@@ -28,6 +31,7 @@ void HeapInit(Heap* hp)
 	hp->num = 0;
 }
 
+//¶ÑµÄÏú»Ù
 void HeapDestroy(Heap* hp)
 {
 	assert(hp);
@@ -36,18 +40,24 @@ void HeapDestroy(Heap* hp)
 	hp->capacity = hp->num = 0;
 }
 
-void adjustUp(HeapDataType* a, int child)//ÒÔĞ¡¶ÑÎªÀı
+//ÏòÉÏµ÷ÕûËã·¨
+void adjustUp(HeapDataType* a, int insert)//ÒÔĞ¡¶ÑÎªÀı
 {
+	//²åÈëµÄ½áµãÖ»»áÓ°ÏìËüµÄ×æÏÈ½áµã
 	assert(a);
-	//Òª°Ñº¢×Óµ÷µ½ÕıÈ·µÄµØ·½
-	int parent = (child - 1) / 2;
-	while (child > 0)
+	//²åÈë½áµãµÄ¸¸Ç×
+	int parent = (insert - 1) / 2;
+	//µ±²åÈë½áµãµ÷Õûµ½¸ù½áµãÊ±£¬µ÷ÕûÒ»¶¨½áÊø
+	while (insert > 0)
 	{
-		if (a[child] < a[parent])
+		//Èô²åÈë½áµãµÄÖµ±ÈËüµÄ¸¸Ç×Ğ¡£¬Ôò½»»»
+		if (a[insert] < a[parent])
 		{
-			Swap(&a[child], &a[parent]);
-			child = parent;//Òªµ÷ÕûµÄº¢×Ó¸üĞÂ
-			parent = (child - 1) / 2;//¸¸Ç×¸üĞÂ
+			Swap(&a[insert], &a[parent]);
+			//²åÈë½áµãµÄÏÂ±ê¸üĞÂ
+			insert = parent;
+			//²åÈë½áµãµÄ¸¸Ç×¸üĞÂ
+			parent = (insert - 1) / 2;
 		}
 		else
 			return;
@@ -57,7 +67,7 @@ void adjustUp(HeapDataType* a, int child)//ÒÔĞ¡¶ÑÎªÀı
 void HeapPush(Heap* hp, HeapDataType x)
 {
 	assert(hp);
-	//ÅĞ¶ÏÀ©Èİ
+	//ÅĞ¶ÏÊÇ·ñĞèÒªÀ©Èİ
 	if (hp->num == hp->capacity)
 	{
 		int newCapacity = 2 * hp->capacity;
@@ -66,35 +76,47 @@ void HeapPush(Heap* hp, HeapDataType x)
 		hp->data = tmp;
 		hp->capacity = newCapacity;
 	}
-	//Î²²åµ½Êı×é
+	//Î²²å
 	hp->data[hp->num++] = x;
-	//ÖØĞÂ°ÑÊı¾İÕû³É¶Ñ
+	//ÏòÉÏµ÷Õû°ÑÊı¾İµ÷³É¶Ñ
 	adjustUp(hp->data, hp->num - 1);
 }
 
-void adjustDown(HeapDataType* a, int num, int parent)//ÓĞnum¸öÔªËØ,´Óparent¿ªÊ¼µ÷Õû
+//ÏòÏÂµ÷ÕûËã·¨
+void adjustDown(HeapDataType* a, int num, int pour)//ÓĞnum¸öÔªËØ,´Ó½áµãpour¿ªÊ¼µ÷Õû
 {
+	//Ç°Ìá£ºpourµÄ×ó×ÓÊ÷ÊÇĞ¡¶Ñ£¬ÓÒ×ÓÊ÷Ò²ÊÇĞ¡¶Ñ
+	//×ÜÌåË¼Â·£º
+	//Ñ¡³ö×óÓÒº¢×ÓÖĞĞ¡µÄÄÇÒ»¸ö
+	//Ğ¡µÄÄÇ¸öº¢×ÓºÍpour±È½Ï
+	//Èç¹ûpour´ó£¬Ôò½»»»£¬¸üĞÂpour,¼ÌĞøÍùÏÂµ÷Õû
+	//Èç¹ûpourĞ¡£¬µ÷Õû½áÊø
 	assert(a);
-	int lesschild = parent * 2 + 1;
+	//¼ÙÉè×îĞ¡µÄº¢×ÓÊÇ×óº¢×Ó
+	int lesschild = pour * 2 + 1;
 	while (lesschild <= num - 1)
 	{
+		//ÅĞ¶ÏÊÇ·ñÓĞÓÒº¢×Ó
 		if (lesschild + 1 <= num - 1)
 		{
-			//ÕÒ³ö×óÓÒº¢×ÓÖĞ×îĞ¡µÄº¢×Ó
+			//¼ÙÉè´íÎó£¬×îĞ¡µÄº¢×Óµ÷ÕûÎªÓÒº¢×Ó
 			if (a[lesschild] > a[lesschild + 1])
 				lesschild++;
 		}
-		//Èô¸¸Ç×±Èº¢×Ó´ó£¬Ôò½»»»£¬·ñÔòµ÷Õû½áÊø
-		if (a[parent] > a[lesschild])
+		//Èôµ¹½áµã±È×îĞ¡µÄº¢×Ó´ó
+		if (a[pour] > a[lesschild])
 		{
-			Swap(&a[parent], &a[lesschild]);
-			parent = lesschild;
-			lesschild = 2 * parent + 1;
+			Swap(&a[pour], &a[lesschild]);
+			//¸üĞÂµ¹½áµãÏÂ±ê
+			pour = lesschild;
+			//¸üĞÂµ¹½áµãµÄº¢×Ó
+			lesschild = 2 * pour + 1;
 		}
 		else
 			return;
 	}
 }
+//µİ¹éĞÎÊ½
 /*void adjustDown(HeapDataType* a, int num, int parent)
 {
 	assert(a);
@@ -112,52 +134,101 @@ void adjustDown(HeapDataType* a, int num, int parent)//ÓĞnum¸öÔªËØ,´Óparent¿ªÊ¼µ
 		return;
 }*/
 
-void HeapPop(Heap* hp)//É¾³ı¶Ñ¶¥µÄÊı¾İ£¬Ê£ÏÂµÄÊıÒÀ¾É±£³ÖÊÇĞ¡¶Ñ
+//É¾³ı¶Ñ¶¥µÄÊı¾İ£¬Ê£ÏÂµÄÊıÒÀ¾É±£³ÖÊÇĞ¡¶Ñ£¨Ê¹ÓÃÏòÏÂµ÷ÕûËã·¨£©
+void HeapPop(Heap* hp)
 {
+	//×ÜÌåË¼Â·£º
+	//½»»»¶Ñ¶¥½áµãºÍ×îºóÒ»¸ö½áµã£¬¶ÑÀïµÄ½áµãÊı-1£¬Ö®ºóÓÃÏòÏÂµ÷ÕûËã·¨ÖØĞÂ°ÑÊı×éµ÷Õû³É¶Ñ
 	assert(hp);
 	assert(hp->num > 0);
+	//½»»»¶Ñ¶¥½áµãºÍ×îºóÒ»¸ö½áµã
 	Swap(&hp->data[0], &hp->data[hp->num - 1]);
+	//½áµãÊı-1£¬Ô­À´µÄ¶Ñ¶¥Êı¾İ¾Í±»É¾³ı
 	hp->num--;
+	//ÏòÏÂµ÷ÕûËã·¨
 	adjustDown(hp->data, hp->num, 0);
 }
 
-HeapDataType HeapTop(Heap* hp)//È¡¶Ñ¶¥µÄÊı¾İ
+//È¡¶Ñ¶¥µÄÊı¾İ
+HeapDataType HeapTop(Heap* hp)
 {
 	assert(hp);
 	assert(!HeapEmpty(hp));
 	return hp->data[0];
 }
 
-bool HeapEmpty(Heap* hp)//ÅĞ¶Ï¶ÑÊÇ·ñÎª¿Õ
+//ÅĞ¶Ï¶ÑÊÇ·ñÎª¿Õ
+bool HeapEmpty(Heap* hp)
 {
 	assert(hp);
 	return hp->num == 0;
 }
 
-int HeapSize(Heap* hp)//¶ÑµÄµ±Ç°ÔªËØ¸öÊı
+//¶ÑµÄµ±Ç°ÔªËØ¸öÊı
+int HeapSize(Heap* hp)
 {
 	assert(hp);
 	return hp->num;
 }
 
+//¶ÑÅÅĞò£¨ÉıĞò½¨´ó¶Ñ£¬½µĞò½¨Ğ¡¶Ñ£©
 void HeapSort(int* arr, int n)
 {
+	//×ÜÌåË¼Â·£º
+	//°ÑÊı×éµ÷Õû³É¶Ñ£¬È»ºóÓÃÏòÏÂµ÷ÕûËã·¨ÒÀ´ÎÑ¡Êı
 	assert(arr);
-	//½¨¶Ñ,ÒÔ½¨Ğ¡¶ÑÎªÀı£¬´Ó¸ßµ½µÍÅÅĞò
+	//½¨¶Ñ,ÒÔ½¨Ğ¡¶ÑÎªÀı£¬ÅÅ½µĞò
 	int i = 0;
+	//ÏòÉÏµ÷Õû½¨¶ÑO(NlogN)
 	/*for (i = 1; i < n; i++)
 	{
-		//ÏòÉÏµ÷Õû½¨¶ÑO(NlogN)
 		adjustUp(arr, i);
 	}*/
 	for (i = (n - 1 - 1) / 2; i >= 0; i--)
 	{
 		//ÏòÏÂµ÷Õû½¨¶ÑO(N)
+		//´Óµ¹ÊıµÚÒ»¸ö·ÇÒ¶×Ó½áµã¿ªÊ¼£¬±£Ö¤arr[i]µÄ×ó×ÓÊ÷ºÍÓÒ×ÓÊ÷¶¼ÊÇĞ¡¶Ñ
 		adjustDown(arr, n, i);
 	}
 	for (i = n - 1; i > 0; i-- )
 	{
+		//½»»»¶Ñ¶¥½áµãºÍ×îºóÒ»¸ö½áµã£¬°Ñmin·Åµ½ºóÃæ
 		Swap(&arr[0], &arr[i]);
+		//½«Ê£ÏÂµÄÊıÖØĞÂ½¨³É¶Ñ
 		adjustDown(arr, i , 0);
 	}
+}
+
+void PrintTopk(int* data, int n, int k)
+{
+	//È¡Ç°k¸ö´óµÄÊı
+	assert(data);
+	//1 ½¨Á¢k¸öÊı¾İ´óĞ¡µÄ¶Ñ
+	int* KMinHeap = (int*)malloc(sizeof(int) * k);
+	assert(KMinHeap);
+	int i = 0;
+	//ÏÈÓÃÇ°k¸öÊı¾İ½¨Ğ¡¶Ñ
+	for (i = 0; i < k; i++)
+	{
+		KMinHeap[i] = data[i];
+	}
+	for (i = (k - 1 - 1) / 2; i >= 0; i--)
+	{
+		adjustDown(KMinHeap, k, i);
+	}
+	//°ÑÊ£ÏÂµÄ(N-k)¸öÊı¾İÒÀ´ÎºÍ¶Ñ¶¥±È½Ï£¬Èô±È¶Ñ¶¥µÄÊı¾İ´óÔòÌæ»»µô¶Ñ¶¥µÄÊı¾İ
+	for (i = k; i < n; i++)
+	{
+		if (data[i] > KMinHeap[0])
+		{
+			Swap(&data[i], &KMinHeap[0]);
+			//ÏòÏÂµ÷ÕûÖØĞÂµ÷³É¶Ñ
+			adjustDown(KMinHeap, k, 0);
+		}
+	}
+	for (i = 0; i < k; i++)
+	{
+		printf("%d ", KMinHeap[i]);
+	}
+	putchar('\n');
 }
