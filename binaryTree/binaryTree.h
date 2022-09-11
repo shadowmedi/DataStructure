@@ -27,3 +27,13 @@ void inOrder(BTNode* root);
 
 //后续遍历
 void postOrder(BTNode* root);
+
+//二叉树结点数量
+int binaryTreeSize(BTNode* root);
+
+//二叉树的第k层的结点数
+int treeKLevel(BTNode* root, int k);
+
+//二叉树的深度
+int treeDepth(BTNode* root);
+

@@ -8,5 +8,7 @@ int main()
 	inOrder(root);
 	putchar('\n');
 	postOrder(root);
+	putchar('\n');
+	printf("%d ", binaryTreeSize(root));
 	return 0;
 }
