@@ -3,9 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
-
-struct BinaryTreeNode;
-typedef struct BinaryTreeNode* QDataType;
+typedef int QDataType;
 typedef struct QueueNode//定义队列的节点
 {
 	QDataType data;
