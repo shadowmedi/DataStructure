@@ -2,13 +2,20 @@
 #include "binaryTree.h"
 int main()
 {
-	BTNode* root = createBinaryTree1();
-	preOrder(root);
+	char str[15] = { 0 };
+	int index = 0;
+	scanf("%s", str);
+	BTNode* root = createBinaryTree2(str, &index);
+	/*preOrder(root);
 	putchar('\n');
 	inOrder(root);
 	putchar('\n');
 	postOrder(root);
 	putchar('\n');
-	printf("%d ", binaryTreeSize(root));
+	printf("%d ", binaryTreeSize(root));*/
+	//levelOrder(root);
+	bool flag = isCompleteTree(root);
+	printf("%d", flag);
+	BinaryTreeDestroy(root);
 	return 0;
 }

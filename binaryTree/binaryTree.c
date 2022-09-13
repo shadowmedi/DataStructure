@@ -35,20 +35,54 @@ BTNode* createBinaryTree1()
 	return node1;
 }
 
-//前序遍历
+//前序遍历字符串构建二叉树
+BTNode* createBinaryTree2(char* str, int* index)
+{
+	//如果遍历到'#',返回空树
+	if (str[*index] == '#')
+	{
+		(*index)++;
+		return NULL;
+	}
+	//先构建根结点
+	BTNode* root = buyBinaryTreeNewNode(str[*index]);
+	(*index)++;
+	//再构建左子树和右子树
+	root->left = createBinaryTree2(str, index);
+	root->right = createBinaryTree2(str, index);
+	return root;
+}
+
+//二叉树的销毁
+void BinaryTreeDestroy(BTNode* root)
+{
+	if (root == NULL)
+		return;
+	//先销毁左子树和右子树
+	BinaryTreeDestroy(root->left);
+	BinaryTreeDestroy(root->right);
+	//再处理根结点
+	free(root);
+}
+
+//前序遍历—— 根、左子树、右子树
 void preOrder(BTNode* root)
 {
+	//空树打印#
 	if (root == NULL)
 	{
 		printf("# ");
 		return;
 	}
-	printf("%d ", root->val);
+	//打印根结点的值
+	printf("%c ", root->val);
+	//遍历左子树
 	preOrder(root->left);
+	//遍历右子树
 	preOrder(root->right);
 }
 
-//中序遍历
+//中序遍历——左子树、根、右子树
 void inOrder(BTNode* root)
 {
 	if (root == NULL)
@@ -57,11 +91,11 @@ void inOrder(BTNode* root)
 		return;
 	}
 	inOrder(root->left);
-	printf("%d ", root->val);
+	printf("%c ", root->val);
 	inOrder(root->right);
 }
 
-//后续遍历
+//后续遍历——左子树、右子树、根
 void postOrder(BTNode* root)
 {
 	if (root == NULL)
@@ -71,7 +105,32 @@ void postOrder(BTNode* root)
 	}
 	postOrder(root->left);
 	postOrder(root->right);
-	printf("%d ", root->val);
+	printf("%c ", root->val);
+}
+
+//层序遍历
+void levelOrder(BTNode* root)
+{
+	if (root == NULL)
+		return;
+	Queue q;
+	QueueInit(&q);
+	QueuePush(&q, root);
+	while (!QueueEmpty(&q))
+	{
+			//取队头数据，并打印
+			BTNode* cur = QueueFront(&q);
+			printf("%c ", cur->val);
+			//出队头数据
+			QueuePop(&q);
+			//将队头的左孩子和右孩子入队列
+			if (cur->left)
+				QueuePush(&q, cur->left);
+			if (cur->right)
+				QueuePush(&q, cur->right);
+		
+	}
+	QueueDestroy(&q);
 }
 
 //二叉树的结点数
@@ -143,4 +202,38 @@ BTNode* binaryTreeFind(BTNode* root, BTDataType x)
 	//左右子树都没有找到
 	return NULL;
 	/*每一次return都是返回给递归调用该函数的上一层*/
+}
+
+//判断是否为完全二叉树
+bool isCompleteTree(BTNode* root)
+{
+	if (root == NULL)
+		return true;
+	Queue q;
+	QueueInit(&q);
+	QueuePush(&q, root);
+	BTNode* cur = QueueFront(&q);
+	//层序遍历二叉树，直到遍历到NULL结束
+	while (cur != NULL)
+	{
+		//出队头数据
+		QueuePop(&q);
+		//将下一层的结点入队列
+		QueuePush(&q, cur->left);
+		QueuePush(&q, cur->right);
+		//更新队头数据
+		cur = QueueFront(&q);
+	}
+	//遍历到NULL后，看队列是否还存有二叉树的非空结点
+	while (!QueueEmpty(&q))
+	{
+		if (QueueFront(&q) != NULL)
+		{
+			QueueDestroy(&q);
+			return false;
+		}
+		QueuePop(&q);
+	}
+	QueueDestroy(&q);
+	return true;
 }
